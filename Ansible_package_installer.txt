@@ -13,9 +13,8 @@
      - name: restart apache
        service: name=httpd state=restarted
 ------------------------------------------------------------------------------------------------
-
 Another Example with Variable installing the package
-
+===================================================
  - name: installing the RPM package
    hosts: hosts
    become: true
