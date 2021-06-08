@@ -12,3 +12,20 @@
    handlers:
      - name: restart apache
        service: name=httpd state=restarted
+------------------------------------------------------------------------------------------------
+
+Another Example with Variable installing the package
+
+ - name: installing the RPM package
+   hosts: hosts
+   become: true
+   vars:
+     packages: httpd
+   tasks:
+     - name: Install HTTPD with RPM package
+       yum: name={{ packages }} state=latest
+       notify:
+        - restart httpd
+   handlers:
+     - name: restart httpd
+       service: name=httpd state=restarted
