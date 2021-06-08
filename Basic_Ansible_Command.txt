@@ -1,0 +1,46 @@
+
+Create Files through Ansible 
+
+---
+ - hosts: all
+   become: true
+   tasks:
+     - name: Creating the file using ansible directory
+       file: path=/tmp/test.txt state=touch
+...
+
+=======================================================================
+
+Create Directory and Permission through Ansible 
+
+---
+ - name: Creating directory
+   hosts: all
+   become_user: root
+   tasks:
+     - name: Creating the directory in temp file
+       file: path=/tmp/test_dir mode=444
+...
+=======================================================================
+Copy the files from source to destination 
+---
+ - name: copy the files
+   hosts: hosts
+   become_method: sudo
+   become_user: root
+   tasks:
+     - name: Copying the files
+       copy: src=/etc/passwd dest=/tmp
+...
+=========================================================================
+Created the Backup Files 
+
+---
+ - name: backup
+   hosts: kkm
+   become: true
+   tasks:
+     - name: Backup the resolv.conf
+       archive: path=/etc/resolv.conf dest=/etc/resolv.conf.bkp.07062021
+...
+============================================================================
