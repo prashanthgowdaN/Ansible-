@@ -1,0 +1,14 @@
+---
+ - name: installing the httpd
+   hosts: hosts
+   become_user: root
+   tasks:
+    - name: Install httpd package
+      yum: name=httpd state=latest
+    - name: copy html page
+      copy: scr=/root/labs/index.hmtl dest=/var/www/html
+      notify:
+       - restart apache
+   handlers:
+     - name: restart apache
+       service: name=httpd state=restarted
