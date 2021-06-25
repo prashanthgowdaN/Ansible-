@@ -1,0 +1,75 @@
+Gather Facts with and without. Variable or steup moudle variables 
+------------------------------------------------------------------
+#ansible localhost -m setup | grep mount
+
+#cat /etc/os-release | awk 'NR==1 {print }'
+#cat /etc/os-release | awk -F = 'NR==1 {print $2}'
+#cat /etc/os-release | awk -F = 'NR==1 {print $2}' | awk '{print $1}'
+#cat /etc/os-release | awk -F = 'NR==1 {print $2}' | awk '{print $1}' | tr '"' ' ' === in cloud AWS 
+
+gather facts or setup 
+---------------------
+
+[root@slc15dkg Practice_lab]# cat gathering_facts.yaml
+---
+ - name: Find os disribution and os name 
+    hosts: hosts
+    become: yes 
+    gather_facts: false
+    tasks:
+     - name:
+       shell: cat /etc/os-release | awk -F = 'NR==1 {print $2}' | awk '{print $1}' | tr '"' ' '
+       register: os_dist
+     - name: Find os Name
+       register: OS_name
+     - debug:
+        msg: 
+         - "This OS name is {{os_dist}}"
+         - "This os name is {{os_name}}"
+
+or --- When you want to run the playbook with different user name and password. 
+-------------------------------------------------------------------------------
+
+[root@slc15dkg Practice_lab]# cat os1.yaml
+---
+ - name: find os disribution and os name
+   hosts: whf
+   become_user: root
+   gather_facts: false
+   vars_prompt:
+     - name: Enter the user_name
+       promtp: Enter user_name
+       private: no
+     - name: Enter the password
+       promtp: Enter your password
+       private: yes
+   tasks:
+     - debug:
+         var: user_name and password
+   tasks:
+     - name: checking name of the os
+       shell: "cat /etc/redhat-release "
+       register: os_dist
+     - name: find os_name
+       shell: "uname"
+       register: os_name
+     - debug:
+         msg:
+          - "This OS name is {{os_dist.stdout}}"
+          - "This os name is {{os_name.stdout}}"
+---------------------------------------------------------------------------------
+# ansible hosts -m setup | grep ansible  ===> This will show the variables of Ansible 
+
+[root@slc15dkg Practice_lab]# cat gather_facts.yml
+---
+ - name: gather facts
+   hosts: hosts1
+   become: yes
+   tasks:
+    - debug:
+       msg:
+        - "This is an: {{ansible_distribution}}"
+        - "This is an: {{ansible_hostname}}"
+        - "This is an: {{ansible_kernel}}"
+        - "This is an: {{ansible_os_family}}"
+        - "This is an: {{ansible_mounts}}"
