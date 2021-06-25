@@ -1,0 +1,27 @@
+
+#cat ansible-playbook installing_handler.yml 
+---
+ - name: installing the RPM package
+   hosts: hosts
+   become: true
+   vars:
+     packages: httpd
+   tasks:
+     - name: Install HTTPD with RPM package
+       yum: name={{ packages }} state=latest
+       notify:
+        - restart httpd
+   handlers:
+     - name: restart httpd
+       service: name=httpd state=restarted
+
+Here i can install the multiple packages 
+---
+ - name: Datastrucutre
+   hosts: hosts
+   gathering_facts: flase
+   become: yes
+   vars:
+     packgs: ['git', 'httpd', 'apachi2']
+   tasks:
+     - debug: var=packgs
