@@ -1,0 +1,40 @@
+[root@slc15dkg Practice_lab]# cat Verifing_hosts_uptime.yml
+---
+ - name: discovery play
+   hosts: hosts1
+   gather_facts: true
+   tasks:
+     - name: Find uptime
+       shell: "uptime"
+       register: up_time
+     - name: Displaying Discovery info
+       debug:
+         msg: "{{inventory_hostname}},{{ansible_os_family}},{{ansible_system}},{{ansible_distribution}},{{up_time.stdout}}"
+     - name: Removing old Discovery .csv file
+       file:
+         dest: ./Discovery.csv
+         state: absent
+       delegate_to: localhost        #==============> Dedicated for the local hosts only 
+     - name: Creating .csv file  with header
+       copy:
+         dest: ./Discovery1.cvs
+         content: "Server_name, OS Family, OS name, OS Distribution, uptime\n"
+       delegate_to: localhost
+       run_once: true
+     - name: Updating info of each server in csv file
+       lineinfile:                    #=============> This is module for copying with CSV file
+         path: ./Discovery1.cvs
+         line: "{{inventory_hostname}},{{ansible_os_family}},{{ansible_system}},{{up_time.stdout}}"
+       delegate_to: localhost
+==================================================================================================================================================================
+output will be 
+
+TASK [Updating info of each server in csv file] *********************************************************************************************************************************************
+changed: [slc10yxy.us.oracle.com]
+
+PLAY RECAP **********************************************************************************************************************************************************************************
+slc10yxy.us.oracle.com     : ok=6    changed=3    unreachable=0    failed=0    skipped=0    rescued=0    ignored=0
+
+[root@slc15dkg Practice_lab]# cat Discovery1.cvs
+Server_name, OS Family, OS name, OS Distribution, uptime
+slc10yxy.us.oracle.com,RedHat,Linux, 18:25:22 up 258 days,  9:20,  1 user,  load average: 0.00, 0.01, 0.05
